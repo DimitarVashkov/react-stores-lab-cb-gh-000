@@ -1,27 +1,46 @@
 import React from 'react';
+import actions from '../actions/index';
+import counterStore from '../stores/counterStore';
 
 class App extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
       // Your implementation here.
+      counter: counterStore.getState()
     };
+
   }
-  componentDidMount () {
-    // Your implementation here.
+  componentDidMount() {
+    // We store a reference to the added event listener.
+    this.removeListener = counterStore.addListener((counter) => {
+      this.setState({counter});
+    });
   }
-  componentWillUnmount () {
-    // Your implementation here.
+  componentWillUnmount() {
+    // Destroy the listener when the component unmounts.
+    this.removeListener();
   }
+
+  handleDecrement(ev){
+    ev.preventDefault();
+    actions.decrement();
+  }
+
+  handleIncrement(ev){
+    ev.preventDefault();
+    actions.increment();
+  }
+
   render () {
     return (
       <div className='app'>
-        <h1 className='counter'></h1>
+        <h1 className='counter'>{this.state.counter}</h1>
         <div className='actions'>
-          <button className='decrement'>
+          <button className='decrement' onClick={this.handleDecrement}>
             -
           </button>
-          <button className='increment'>
+          <button className='increment' onClick={this.handleIncrement}>
             +
           </button>
         </div>
